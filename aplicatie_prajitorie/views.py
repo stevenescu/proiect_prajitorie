@@ -5,10 +5,18 @@ from urllib.parse import urlparse
 from django.http import HttpResponse
 
 def index(request):
+    ip_index = request.META.get('REMOTE_ADDR')                                    #preia adresa IP a vizitatorului paginii
+    url_index = request.build_absolute_uri()                                      #preia adresa URL completa care e accesata
+    accesare_index = Accesare(ip_client=ip_index, url=url_index, parametri=request.GET)
+
     return HttpResponse("<html><h1>Artisan Roastery – Prăjitorie de cafea de specialitate</h1><html>"
                         "<html><p>Platforma web „Artisan Roastery” este un magazin online dedicat comercializării cafelei de specialitate proaspăt prăjite, precum și a echipamentelor de preparare. Aplicația va oferi utilizatorilor posibilitatea de a explora cafele de origine unică (Single Origin), filtrate după țara de origine, profilul de prăjire, metoda de procesare, notele aromatice și modul de măcinare.</p><html>")
 
 def info(request):
+    ip_info = request.META.get('REMOTE_ADDR')
+    url_info = request.build_absolute_uri()
+    accesare_info = Accesare(ip_client=ip_info, url=url_info, parametri=request.GET)
+    
     data_ora = formateaza_data_ro(datetime.now())
     return HttpResponse(f'<!DOCTYPE html> <html lang="ro"> <head> <meta charset="UTF-8"> <title>Informații despre server</title> </head> <body> <h1>Informații despre server</h1> <section> <h2>Data și ora</h2> <p>{data_ora}</p> </section> </body> </html>')
 
@@ -27,3 +35,15 @@ def formateaza_data_ro(data_obiect):
     secunda = f"{data_obiect.second:02d}"
     
     return f"{ziua_saptamanii}, {ziua_lunii} {luna_anului} {anul}, ora {ora}:{minut}:{secunda}"
+
+class Accesare:
+    contor_id = 0                                                           #contorul care pune primul id 1 (Accesare.contor_id trebuie sa fie inainte lui self.id)
+    def __init__(self, ip_client, url, parametri = None, data = None):      #am pus None la argumentele paramatri si data ca sa nu fiu nevoit sa le dau o valoare de fiecare data cand vreau sa creez un obiect nou de tip Accesare
+        Accesare.contor_id += 1                                             #la fiecare apel incrementeaza cu 1
+        
+        #proprietatile constructorului        
+        self.id = Accesare.contor_id
+        self.ip_client = ip_client
+        self.url = url
+        self.parametri = parametri if parametri is not None else {}         #proprietatea parametri este setat ca sa completeze un dictionar gol daca nu ii trimit alta valorare
+        self.data = data if data is not None else datetime.now()            #proprietatea data este setat la data curenta in cazul in care nu trimit alta valoare
