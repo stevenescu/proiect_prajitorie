@@ -8,7 +8,12 @@ def index(request):
     ip_index = request.META.get('REMOTE_ADDR')                                    #preia adresa IP a vizitatorului paginii
     url_index = request.build_absolute_uri()                                      #preia adresa URL completa care e accesata
     accesare_index = Accesare(ip_client=ip_index, url=url_index, parametri=request.GET)
-    print("Test parametri: ", accesare_index.lista_parametri())                   #am testat sa vad daca functioneaza
+    
+    test = Accesare(ip_client=ip_index, url=url_index, parametri=request.GET)
+    print("test string url: ", test.string_url())
+    print("test pagina: ", test.pagina())
+    
+    
     return HttpResponse("<html><h1>Artisan Roastery – Prăjitorie de cafea de specialitate</h1><html>"
                         "<html><p>Platforma web „Artisan Roastery” este un magazin online dedicat comercializării cafelei de specialitate proaspăt prăjite, precum și a echipamentelor de preparare. Aplicația va oferi utilizatorilor posibilitatea de a explora cafele de origine unică (Single Origin), filtrate după țara de origine, profilul de prăjire, metoda de procesare, notele aromatice și modul de măcinare.</p><html>")
 
@@ -55,7 +60,15 @@ class Accesare:
             rezultat.append((nume_param, valoare_noua))                     #aici este tuplul pe care nu il intelegeam; deci adauga pereche (nume_param, valoare_param) care reprezinta un tuplu
         return rezultat                                                     #rezultatul va fi lista de tupluri de forma [('nume1', 'valoare1), ('nume2', 'valoare2')]
     
-    
-    
+    def string_url(self):
+        return self.url                                                     #clasa Accesare retine deja url complet in self.url, doar il returnez aici
+
+    def pagina(self):
+        url_parsat = urlparse(self.url)
+        cale = url_parsat.path
+        prefix = "/aplicatie_prajitorie"
+        if cale.startswith(prefix):
+            cale = cale[len(prefix):]
+        return cale if cale else "/"
     
         
