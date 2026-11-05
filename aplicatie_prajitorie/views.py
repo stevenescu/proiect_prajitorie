@@ -8,7 +8,7 @@ def index(request):
     ip_index = request.META.get('REMOTE_ADDR')                                    #preia adresa IP a vizitatorului paginii
     url_index = request.build_absolute_uri()                                      #preia adresa URL completa care e accesata
     accesare_index = Accesare(ip_client=ip_index, url=url_index, parametri=request.GET)
-
+    print("Test parametri: ", accesare_index.lista_parametri())                   #am testat sa vad daca functioneaza
     return HttpResponse("<html><h1>Artisan Roastery – Prăjitorie de cafea de specialitate</h1><html>"
                         "<html><p>Platforma web „Artisan Roastery” este un magazin online dedicat comercializării cafelei de specialitate proaspăt prăjite, precum și a echipamentelor de preparare. Aplicația va oferi utilizatorilor posibilitatea de a explora cafele de origine unică (Single Origin), filtrate după țara de origine, profilul de prăjire, metoda de procesare, notele aromatice și modul de măcinare.</p><html>")
 
@@ -47,3 +47,15 @@ class Accesare:
         self.url = url
         self.parametri = parametri if parametri is not None else {}         #proprietatea parametri este setat ca sa completeze un dictionar gol daca nu ii trimit alta valorare
         self.data = data if data is not None else datetime.now()            #proprietatea data este setat la data curenta in cazul in care nu trimit alta valoare
+    
+    def lista_parametri(self):
+        rezultat = []
+        for nume_param, val_param in self.parametri.items():                #metoda items ia fiecare element din dictionarul cu parametri si pune numele in nume_param si valoarea in val_param
+            valoare_noua = val_param if val_param else None                 #daca utilizatorul lasa goala valoarea in url, pune None in loc de sir gol ""
+            rezultat.append((nume_param, valoare_noua))                     #aici este tuplul pe care nu il intelegeam; deci adauga pereche (nume_param, valoare_param) care reprezinta un tuplu
+        return rezultat                                                     #rezultatul va fi lista de tupluri de forma [('nume1', 'valoare1), ('nume2', 'valoare2')]
+    
+    
+    
+    
+        
