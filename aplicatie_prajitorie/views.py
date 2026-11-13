@@ -9,11 +9,6 @@ def index(request):
     url_index = request.build_absolute_uri()                                      #preia adresa URL completa care e accesata
     accesare_index = Accesare(ip_client=ip_index, url=url_index, parametri=request.GET)
     
-    test = Accesare(ip_client=ip_index, url=url_index, parametri=request.GET)
-    print("test string url: ", test.string_url())
-    print("test pagina: ", test.pagina())
-    
-    
     return HttpResponse("<html><h1>Artisan Roastery – Prăjitorie de cafea de specialitate</h1><html>"
                         "<html><p>Platforma web „Artisan Roastery” este un magazin online dedicat comercializării cafelei de specialitate proaspăt prăjite, precum și a echipamentelor de preparare. Aplicația va oferi utilizatorilor posibilitatea de a explora cafele de origine unică (Single Origin), filtrate după țara de origine, profilul de prăjire, metoda de procesare, notele aromatice și modul de măcinare.</p><html>")
 
@@ -22,7 +17,7 @@ def info(request):
     url_info = request.build_absolute_uri()
     accesare_info = Accesare(ip_client=ip_info, url=url_info, parametri=request.GET)
     
-    data_ora = formateaza_data_ro(datetime.now())
+    data_ora = accesare_info.calculeaza_data()
     return HttpResponse(f'<!DOCTYPE html> <html lang="ro"> <head> <meta charset="UTF-8"> <title>Informații despre server</title> </head> <body> <h1>Informații despre server</h1> <section> <h2>Data și ora</h2> <p>{data_ora}</p> </section> </body> </html>')
 
 
@@ -64,11 +59,13 @@ class Accesare:
         return self.url                                                     #clasa Accesare retine deja url complet in self.url, doar il returnez aici
 
     def pagina(self):
-        url_parsat = urlparse(self.url)
-        cale = url_parsat.path
-        prefix = "/aplicatie_prajitorie"
-        if cale.startswith(prefix):
+        url_parsat = urlparse(self.url)                                     #urlparse splituieste url-ul in domeniu, cale ,parametri
+        cale = url_parsat.path                                              #din url parsat am luat doar calea
+        prefix = "/aplicatie_prajitorie"                                    #am definit numele aplicatiei ca variabila si am definit un if in care, daca calea incepe cu prefix, taie acel prefix
+        if cale.startswith(prefix):                                         
             cale = cale[len(prefix):]
-        return cale if cale else "/"
+        return cale if cale else "/"                                        #de fapt aici returneaza cale, altfel returneaza "/", pentru ca daca taie "/aplicatie_prajitorie" ramane randul gol 
     
+    def calculeaza_data(self, format="ziua, data, ora"):
+        return formateaza_data_ro(self.data)
         
